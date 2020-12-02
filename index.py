@@ -27,13 +27,13 @@ fig = px.scatter(goalScorers,x='GoalsPer90',y='PointsNorm',color='Name',
                  size='Goals',size_max=40)
 fig.update_layout(xaxis_title='Goals per 90 mins',yaxis_title='Points won for team (normalised)')
 
-
+description = dcc.Markdown('''
+Visualization to contrast **impact** of goal scorers. The data used is premier league goals from 2000-2001 season to 2019-2020
+''')
 app.layout = html.Div(children=[
     html.H1(children='Liverpool: Goal scorers of 21st century'),
 
-    html.Div(children='''
-        Visualization to contrast `Impact' of goal scorers. The data used is premier league goals from 2000-2001 season to 2019-2020
-    '''),
+    html.Div(children=description),
 
     dcc.Graph(
         id='gper90-v-ptsnorm-graph',
