@@ -29,6 +29,13 @@ fig.update_layout(xaxis_title='Goals per 90 mins',yaxis_title='Points won for te
 
 description = dcc.Markdown('''
 Visualization to contrast **impact** of goal scorers. The data used is premier league goals from 2000-2001 season to 2019-2020
+
+**Description of axis variables**
+
+* **Goals per 90 mins**:  (total goals/total minutes played) X 90
+* **Points won (normalised)**: If a player's goal was the final goal and that was the game-defining goal, i.e. leading to a draw (+1 point) or a win (+3 points). 
+    * normalised points = total points won/(3*matches played)
+* **Size** of the blobs: Total goals
 ''')
 app.layout = html.Div(children=[
     html.H1(children='Liverpool: Goal scorers of 21st century'),
