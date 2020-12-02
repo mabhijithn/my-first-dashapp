@@ -32,7 +32,7 @@ app.layout = html.Div(children=[
     html.H1(children='Liverpool: Goal scorers of 21st century'),
 
     html.Div(children='''
-        Dash: A web application framework for Python.
+        Visualization to contrast `Impact' of goal scorers. The data used is premier league goals from 2000-2001 season to 2019-2020
     '''),
 
     dcc.Graph(
