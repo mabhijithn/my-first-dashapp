@@ -31,6 +31,9 @@ Visualization to contrast **impact** of goal scorers. The data used is premier l
 * **Points won (normalised)**: If a player's goal was the final goal and that was the game-defining goal, i.e. leading to a draw (+1 point) or a win (+3 points). 
     * normalised points = total points won/(3*matches played)
 * **Size** of the blobs: Total goals
+
+**Disclaimer:** The data shown here is for personal consumption. Please leave 
+feedback replying to my twitter profile [Ituralde] <https://twitter.com/Ituralde> and give a follow once you are there :-) 
 ''')
 
 selectclubtxt = dcc.Markdown('''#### Select Club ''')
