@@ -27,22 +27,32 @@ def getgoalscorers(playerfiles,clubname):
     Containing name, goals, appearance, minutes, game-changing goals and points won for their team
 
     '''
-    if 'All Clubs' not in clubname:
-        goalScorers = pd.DataFrame(columns=['Name','Goals','Appearances','Minutes','GCgoals','Points'])
-        for playerfile in playerfiles:
-            with open(playerfile,'r') as p:
-                player = json.load(p)
-            clubStats = player['clubStats']
+    
+    goalScorers = pd.DataFrame(columns=['Name','Club','Goals','Appearances','Minutes','GCgoals','Points'])
+    for playerfile in playerfiles:
+        with open(playerfile,'r') as p:
+            player = json.load(p)
+        clubStats = player['clubStats']
+        if 'All Clubs' in clubname:
+            for clubStat in clubStats:
+                if 'appearances' in clubStat:
+                    if clubStat['goals']>0:
+                        goalScorer = {'Name':player['name'],'Club':clubStat['club'],'Goals':clubStat['goals'],
+                                  'Appearances':clubStat['appearances'],'Minutes':clubStat['minsPlayed'],
+                                   'GCgoals':clubStat['gcGoal'],'Points':clubStat['pointsWon']
+                                     }
+                        goalScorers = goalScorers.append(goalScorer,ignore_index=True)
+        else:
             idx = next((idx for idx,d in enumerate(clubStats) if clubname in d['club']),None)
             if idx is not None:
                 clubStat = clubStats[idx]
                 if 'appearances' in clubStat:
                     if clubStat['goals']>0:
-                        goalScorer = {'Name':player['name'],'Goals':clubStat['goals'],
+                        goalScorer = {'Name':player['name'],'Club':clubStat['club'],'Goals':clubStat['goals'],
                                   'Appearances':clubStat['appearances'],'Minutes':clubStat['minsPlayed'],
                                    'GCgoals':clubStat['gcGoal'],'Points':clubStat['pointsWon']
                                      }
                         goalScorers = goalScorers.append(goalScorer,ignore_index=True)
-        maxGoals = goalScorers['Goals'].max()
-    
+    maxGoals = goalScorers['Goals'].max()
+        
     return goalScorers,maxGoals

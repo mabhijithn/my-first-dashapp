@@ -20,6 +20,7 @@ from helperfns import *
 #MUFC_gScorers = pd.read_csv('MUTD_gScorers.csv')
 df_clubs = pd.read_csv('data/clubnames.csv')
 clubnames = df_clubs['Club'].to_list()
+clubnames.insert(0,'All Clubs')
 
 description = dcc.Markdown('''
 Visualization to contrast **impact** of goal scorers. The data used is premier league goals from 2000-2001 season to 2019-2020
@@ -34,6 +35,7 @@ Visualization to contrast **impact** of goal scorers. The data used is premier l
 
 selectclubtxt = dcc.Markdown('''#### Select Club ''')
 mingoalstxt = dcc.Markdown('''**Minimum Goals**''')
+clubseltxt = dcc.Markdown('''**Club(s) Selected**''')
 # app.layout = html.Div(children=[
 #     html.H1(children=f'Goal scorers of 21st century'),
 
@@ -55,7 +57,10 @@ app.layout = html.Div([
     dcc.Dropdown(id='clubname-dropdown',
                  options=[{'label': i, 'value': i} for i in clubnames],
                  value='Liverpool FC')]),
+    html.Div(children=clubseltxt),    
+    html.Div(id='club-display'),
     html.Br(),html.Br(),
+    html.Br(),
     html.Div([                 
     dcc.Slider(id='min-goal-slider', min=1, max=30,value=15,
                step=None,
@@ -71,27 +76,36 @@ app.layout = html.Div([
 @app.callback(
     Output('min-goal-slider','max'),
     Output('min-goal-slider','value'),
+    Output('club-display','children'),
     Input('clubname-dropdown','value')
     )
 def get_goaldata(clubname):
     playerfiles = glob.glob('data/players_updated/*.json')
     goalScorers,maxGoals = getgoalscorers(playerfiles,clubname)
-    goalScorers.to_csv('goalScorers.csv')
+    if 'All Clubs' in clubname:
+        goalScorers.to_csv('allEPLgoalScorers.csv')
+    else:
+        goalScorers.to_csv('goalScorers.csv')
+    clubselected = clubname
     if maxGoals<30:
         defval = int(maxGoals/2)
     else:
         defval = 15
         maxGoals = 30
-    return maxGoals,defval
+    return maxGoals,defval,clubselected
 
 @app.callback(
     Output('gper90-v-ptsnorm-graph', 'figure'),
     Output('slider-display','children'),
-    Input('min-goal-slider','value')
+    Input('min-goal-slider','value'),
+    Input('club-display','children')
     )
-def update_plot(minGoals):
+def update_plot(minGoals,clubselected):
     displaystr = f'{minGoals}'
-    goalScorers = pd.read_csv('goalScorers.csv')  
+    if 'All Clubs' not in clubselected:
+        goalScorers = pd.read_csv('goalScorers.csv')
+    else:
+        goalScorers = pd.read_csv('allEPLgoalScorers.csv')
     goalScorers = goalScorers[goalScorers['Goals']>=minGoals]
     goalScorers.sort_values(by='Goals',ascending=False,inplace=True)
     goalScorers['Goals'] = pd.to_numeric(goalScorers['Goals'])
@@ -102,8 +116,13 @@ def update_plot(minGoals):
     goalScorers.loc[:,'PointsNorm'] = goalScorers.loc[:,'Points']/(3*goalScorers.loc[:,'Appearances'])
         
     maxpts = goalScorers['PointsNorm'].max()
-    fig = px.scatter(goalScorers,x='GoalsPer90',y='PointsNorm',color='Name',
+    
+    if 'All Clubs' not in clubselected:        
+        fig = px.scatter(goalScorers,x='GoalsPer90',y='PointsNorm',color='Name',
                      size='Goals',size_max=40)
+    else:
+        fig = px.scatter(goalScorers,x='GoalsPer90',y='PointsNorm',color='Club',hover_name='Name',
+                     size='Goals',size_max=40)    
     fig.update_layout(xaxis_title='Goals per 90 mins',yaxis_title='Points won for team (normalised)',
                       yaxis=dict(range=[-0.1,maxpts+0.1],tickmode='linear',tick0 = 0,dtick=0.1))
     return fig,displaystr
