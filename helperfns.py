@@ -28,7 +28,7 @@ def getgoalscorers(playerfiles,clubname):
 
     '''
     
-    goalScorers = pd.DataFrame(columns=['Name','Club','Goals','Appearances','Minutes','GCgoals','Points'])
+    goalScorers = pd.DataFrame(columns=['Name','ID','Club','Goals','Appearances','Minutes','GCgoals','Points'])
     for playerfile in playerfiles:
         with open(playerfile,'r') as p:
             player = json.load(p)
@@ -37,7 +37,7 @@ def getgoalscorers(playerfiles,clubname):
             for clubStat in clubStats:
                 if 'appearances' in clubStat:
                     if clubStat['goals']>0:
-                        goalScorer = {'Name':player['name'],'Club':clubStat['club'],'Goals':clubStat['goals'],
+                        goalScorer = {'Name':player['name'],'ID':player['id'],'Club':clubStat['club'],'Goals':clubStat['goals'],
                                   'Appearances':clubStat['appearances'],'Minutes':clubStat['minsPlayed'],
                                    'GCgoals':clubStat['gcGoal'],'Points':clubStat['pointsWon']
                                      }

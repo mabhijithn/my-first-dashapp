@@ -83,12 +83,12 @@ app.layout = html.Div([
     Input('clubname-dropdown','value')
     )
 def get_goaldata(clubname):
-    playerfiles = glob.glob('data/players_updated/*.json')
-    goalScorers,maxGoals = getgoalscorers(playerfiles,clubname)
-    if 'All Clubs' in clubname:
-        goalScorers.to_csv('allEPLgoalScorers.csv')
+    goalScorersAll = pd.read_csv('allEPLgoalScorers.csv')
+    if 'All Clubs' not in clubname:
+        goalScorers = goalScorersAll[goalScorersAll['Club'].str.contains(clubname)]
     else:
-        goalScorers.to_csv('goalScorers.csv')
+        goalScorers = goalScorersAll
+    maxGoals = goalScorers['Goals'].max()
     clubselected = clubname
     if maxGoals<30:
         defval = int(maxGoals/2)
@@ -105,16 +105,17 @@ def get_goaldata(clubname):
     )
 def update_plot(minGoals,clubselected):
     displaystr = f'{minGoals}'
+    goalScorersAll = pd.read_csv('allEPLgoalScorers.csv')
     if 'All Clubs' not in clubselected:
-        goalScorers = pd.read_csv('goalScorers.csv')
+        goalScorers = goalScorersAll[goalScorersAll['Club'].str.contains(clubselected)]
     else:
-        goalScorers = pd.read_csv('allEPLgoalScorers.csv')
+        goalScorers = goalScorersAll
     goalScorers = goalScorers[goalScorers['Goals']>=minGoals]
     goalScorers.sort_values(by='Goals',ascending=False,inplace=True)
-    goalScorers['Goals'] = pd.to_numeric(goalScorers['Goals'])
-    goalScorers['GCgoals'] = pd.to_numeric(goalScorers['GCgoals'])
-    goalScorers['Appearances'] = pd.to_numeric(goalScorers['Appearances'])
-    goalScorers['Minutes'] = pd.to_numeric(goalScorers['Minutes'])
+    goalScorers.loc[:,'Goals'] = pd.to_numeric(goalScorers.loc[:,'Goals'])
+    goalScorers.loc[:,'GCgoals'] = pd.to_numeric(goalScorers.loc[:,'GCgoals'])
+    goalScorers.loc[:,'Appearances'] = pd.to_numeric(goalScorers.loc[:,'Appearances'])
+    goalScorers.loc[:,'Minutes'] = pd.to_numeric(goalScorers.loc[:,'Minutes'])
     goalScorers.loc[:,'GoalsPer90'] = 90*(goalScorers.loc[:,'Goals']/goalScorers.loc[:,'Minutes'])
     goalScorers.loc[:,'PointsNorm'] = goalScorers.loc[:,'Points']/(3*goalScorers.loc[:,'Appearances'])
         
