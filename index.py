@@ -11,6 +11,7 @@ import glob
 import numpy as np
 import dash_html_components as html
 import dash_core_components as dcc
+import dash_table
 from dash.dependencies import Input, Output
 import json
 import plotly.express as px
@@ -80,7 +81,9 @@ app.layout = html.Div([
         dcc.Tab(label='Points Won for Team',selected_style=tab_selected_style,
             children=[
             dcc.Graph(id='gper90-v-ptsnorm-graph'),
-            descriptionTab1
+            descriptionTab1,
+            dcc.Dropdown(id='players-dropdown'),
+            dash_table.DataTable(id='player-goals')
             ]),
         dcc.Tab(label='Game Changing Goals for Team',selected_style=tab_selected_style,
             children=[
@@ -175,5 +178,44 @@ def update_plot(minGoals,clubselected):
                        yaxis=dict(range=[0,maxgcPapp+0.1],tickmode='linear',tick0 = 0,dtick=0.1))
     return fig,fig1,displaystr
 
+@app.callback(
+    Output('players-dropdown','options'),
+    Output('players-dropdown','value'),
+    Input('min-goal-slider','value'),
+    Input('clubname-dropdown','value')
+    )
+def playerdropdown(minGoals,clubselected):
+    goalScorersAll = pd.read_csv('allEPLgoalScorers.csv')
+
+    
+    if 'All Clubs' not in clubselected:
+        goalScorers = goalScorersAll[goalScorersAll['Club'].str.contains(clubselected)]
+    else:
+        goalScorers = goalScorersAll
+    goalScorers = goalScorers[goalScorers['Goals']>=minGoals]
+    
+    playernames = goalScorers['Name'].tolist()
+    options_ret = [{'label':i, 'value':i} for i in playernames]
+    value_ret = playernames[0]
+    return options_ret,value_ret
+
+@app.callback(
+    Output('player-goals','columns'),
+    Output('player-goals','data'),
+    Input('players-dropdown','value'),
+    Input('clubname-dropdown','value')
+    )
+def update_table(playername,clubselected):
+    goaleventsDB = pd.read_csv('epl_goalevents_2000_2019.csv')
+    if 'All Clubs' not in clubselected:
+        playeridx = (goaleventsDB['Player']==playername) & (goaleventsDB['TeamFor']==clubselected)
+    else:
+        playeridx = (goaleventsDB['Player']==playername)
+    playergoals = goaleventsDB[playeridx]
+    
+    coulumnlist = ['Date','Season','TeamFor','TeamAga','Venue','Time','Score','FTScore','PointsWon']
+    columns=[{"name": i, "id": i} for i in coulumnlist]
+    playergoalsdict = playergoals.to_dict('records')
+    return columns,playergoalsdict
 if __name__ == '__main__':
     app.run_server(debug=True)
