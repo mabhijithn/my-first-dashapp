@@ -83,7 +83,17 @@ app.layout = html.Div([
             dcc.Graph(id='gper90-v-ptsnorm-graph'),
             descriptionTab1,
             dcc.Dropdown(id='players-dropdown'),
-            dash_table.DataTable(id='player-goals')
+            dash_table.DataTable(id='player-goals',
+            style_cell={'textAlign': 'left'},
+            style_data_conditional=[
+            {
+                'if': {
+                    'filter_query': '{PointsWon} > 0',
+                    },
+                'backgroundColor': '#FF4136',
+                'color': 'white'
+            },
+            ])                           
             ]),
         dcc.Tab(label='Game Changing Goals for Team',selected_style=tab_selected_style,
             children=[
@@ -212,10 +222,13 @@ def update_table(playername,clubselected):
     else:
         playeridx = (goaleventsDB['Player']==playername)
     playergoals = goaleventsDB[playeridx]
+    playergoals.loc[:,'Date'] = pd.to_datetime(playergoals.loc[:,'Date'])
+    playergoals.loc[:,'Date'] = playergoals.loc[:,'Date'].dt.strftime('%A, %d. %B %Y')    
     
     coulumnlist = ['Date','Season','TeamFor','TeamAga','Venue','Time','Score','FTScore','PointsWon']
-    columns=[{"name": i, "id": i} for i in coulumnlist]
+    columnnames = ['Date','Season','For','Against','Venue','Time','Score','Full Time Score','Points Won']
+    columns=[{"name": columnnames[i], "id": coulumnlist[i]} for i in range(len(coulumnlist))]
     playergoalsdict = playergoals.to_dict('records')
     return columns,playergoalsdict
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=True,port=1234)
