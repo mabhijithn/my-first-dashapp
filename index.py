@@ -90,6 +90,11 @@ app.layout = html.Div([
                 ),
             dcc.Graph(id='gper90-v-ptsnorm-graph'),
             descriptionTab1,
+            dcc.Markdown('''
+                         ### Goal List of Players 
+                         #### **(Point-Winning goals highlighted)**
+                         ##### Select Player from the dropdown below
+                         '''),
             dcc.Dropdown(id='players-dropdown'),
             dash_table.DataTable(id='points-goals',
             style_cell={'textAlign': 'left'},
@@ -114,6 +119,11 @@ app.layout = html.Div([
                 ),
             dcc.Graph(id='gdper90-v-gcgoalspct-graph'),
             descriptionTab2,
+            dcc.Markdown('''
+                         ### Goal List of Players 
+                         #### **(Game-changing goals highlighted)**
+                         ##### Select Player from the dropdown below
+                         '''),
             dcc.Dropdown(id='players-dropdown-2'),
             dash_table.DataTable(id='gc-goals',
             style_cell={'textAlign': 'left'},
@@ -164,6 +174,7 @@ def update_plot(minGoals,clubselected,pointsaxis,gcgoalsaxis):
     displaystr = f'Minimum Goals: {minGoals}'
     goalScorersAll = pd.read_csv('allEPLgoalScorers.csv')
     playerstatsAll = pd.read_csv('epl_aggregate_appearances_with_goals_allplayers_2000_2019.csv')
+    patternstr = '[a-zA-z_äöüÄÖÜùûüÿàâæéèêëïîô]+'
     
     if 'All Clubs' not in clubselected:
         goalScorers = goalScorersAll[goalScorersAll['Club'].str.contains(clubselected)]
@@ -173,6 +184,7 @@ def update_plot(minGoals,clubselected,pointsaxis,gcgoalsaxis):
         playerstats = playerstatsAll
         
     datatoplot = playerstats[playerstats['Goals']>=minGoals]
+    datatoplot['Surname'] = datatoplot['Name'].str.extract(r' ([a-zA-z_äöüÄÖÜŠùûüÿàáâćæéèêëïîíôšž ]+)')
     datatoplot.sort_values(by='Goals',ascending=False,inplace=True)
     datatoplot.loc[:,'Goals'] = pd.to_numeric(datatoplot.loc[:,'Goals'])
     datatoplot.loc[:,'GCGoals'] = pd.to_numeric(datatoplot.loc[:,'GCGoals'])
@@ -217,18 +229,20 @@ def update_plot(minGoals,clubselected,pointsaxis,gcgoalsaxis):
     
     if 'GCgoalsPapp' in gcgoalsaxis:
         maxgcPapp = datatoplot['GCgoalsPapp'].max()
-        y_range_gc = [0,maxgcPapp+0.1]
+        y_range_gc = [-0.1,maxgcPapp+0.1]
         y_dtick_gc = 0.1
     else:
         maxGCgoals = datatoplot['GCGoals'].max()
-        y_range_gc = [-1,maxGCgoals+5]
+        y_range_gc = [-3,maxGCgoals+7]
         y_dtick_gc = 5    
         
     if 'All Clubs' not in clubselected:        
-        fig = px.scatter(goalScorers,x='GoalsPer90',y=pointsaxis,color='Name',hover_name='Name',
+        fig = px.scatter(goalScorers,x='GoalsPer90',y=pointsaxis,text='Surname',hover_name='Name',
+                     size='Goals',size_max=40)        
+        fig.update_traces(textposition='middle left')
+        fig1 = px.scatter(goalScorers,x='GoalsPer90',y=gcgoalsaxis,text='Surname',hover_name='Name',
                      size='Goals',size_max=40)
-        fig1 = px.scatter(goalScorers,x='GoalsPer90',y=gcgoalsaxis,color='Name',hover_name='Name',
-                     size='Goals',size_max=40)
+        fig1.update_traces(textposition='middle left')
     else:
         fig = px.scatter(goalScorers,x='GoalsPer90',y=pointsaxis,color='Club',hover_name='Name',
                      size='Goals',size_max=40) 
