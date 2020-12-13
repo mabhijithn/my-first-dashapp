@@ -231,10 +231,12 @@ def update_plot(minGoals,clubselected,pointsaxis,gcgoalsaxis):
         maxgcPapp = datatoplot['GCgoalsPapp'].max()
         y_range_gc = [-0.1,maxgcPapp+0.1]
         y_dtick_gc = 0.1
+        ylabel_gc = 'Game-Changing Goals per Appearance'
     else:
         maxGCgoals = datatoplot['GCGoals'].max()
         y_range_gc = [-3,maxGCgoals+7]
-        y_dtick_gc = 5    
+        y_dtick_gc = 5  
+        ylabel_gc = 'Game-Changing Goals'
         
     if 'All Clubs' not in clubselected:        
         fig = px.scatter(goalScorers,x='GoalsPer90',y=pointsaxis,text='Surname',hover_name='Name',
@@ -252,7 +254,7 @@ def update_plot(minGoals,clubselected,pointsaxis,gcgoalsaxis):
     fig.update_layout(xaxis_title='Goals per 90 mins',yaxis_title=ylabel,
                       xaxis=dict(range=[0,maxgp90all+0.1],tickmode='linear',tick0=0,dtick=0.1),
                       yaxis=dict(range=y_range,tickmode='linear',tick0 = 0,dtick=y_dtick))
-    fig1.update_layout(xaxis_title='Goals per 90 mins',yaxis_title='Game-Changing Goals per Appearance',
+    fig1.update_layout(xaxis_title='Goals per 90 mins',yaxis_title=ylabel_gc,
                       xaxis=dict(range=[0,maxgp90+0.1],tickmode='linear',tick0=0,dtick=0.1),
                        yaxis=dict(range=y_range_gc,tickmode='linear',tick0 = 0,dtick=y_dtick_gc))
     return fig,fig1,displaystr
