@@ -315,7 +315,7 @@ def update_table(playername,clubselected):
     Input('clubname-dropdown','value')
     )
 def update_table2(playername,clubselected):
-    goaleventsDB = pd.read_csv('epl_goalevents_2000_2019.csv')
+    goaleventsDB = pd.read_csv('epl_goalevents_2000_2020.csv')
     if 'All Clubs' not in clubselected:
         playeridx = (goaleventsDB['Player']==playername) & (goaleventsDB['TeamFor']==clubselected)
     else:
