@@ -173,7 +173,7 @@ def get_goaldata(clubname):
 def update_plot(minGoals,clubselected,pointsaxis,gcgoalsaxis):
     displaystr = f'Minimum Goals: {minGoals}'
     goalScorersAll = pd.read_csv('allEPLgoalScorers.csv')
-    playerstatsAll = pd.read_csv('epl_aggregate_appearances_with_goals_allplayers_2000_2019.csv')
+    playerstatsAll = pd.read_csv('epl_aggregate_appearances_with_goals_allplayers_2000_2020.csv')
     patternstr = '[a-zA-z_äöüÄÖÜùûüÿàâæéèêëïîô]+'
     
     if 'All Clubs' not in clubselected:
@@ -268,7 +268,7 @@ def update_plot(minGoals,clubselected,pointsaxis,gcgoalsaxis):
     Input('clubname-dropdown','value')
     )
 def playerdropdown(minGoals,clubselected):    
-    playerstatsAll = pd.read_csv('epl_aggregate_appearances_with_goals_allplayers_2000_2019.csv')
+    playerstatsAll = pd.read_csv('epl_aggregate_appearances_with_goals_allplayers_2000_2020.csv')
     
     if 'All Clubs' not in clubselected:        
         playerstats = playerstatsAll[playerstatsAll['Club']==clubselected]
@@ -293,7 +293,7 @@ def playerdropdown(minGoals,clubselected):
     Input('clubname-dropdown','value')
     )
 def update_table(playername,clubselected):
-    goaleventsDB = pd.read_csv('epl_goalevents_2000_2019.csv')
+    goaleventsDB = pd.read_csv('epl_goalevents_2000_2020.csv')
     if 'All Clubs' not in clubselected:
         playeridx = (goaleventsDB['Player']==playername) & (goaleventsDB['TeamFor']==clubselected)
     else:
