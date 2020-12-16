@@ -25,7 +25,7 @@ df_clubs = pd.read_csv('data/clubnames.csv')
 clubnames = df_clubs['Club'].to_list()
 clubnames.insert(0,'All Clubs')
 maindescr = dcc.Markdown('''
-Visualization to contrast **impact** of goal scorers. The data used is premier league goals from 2000-2001 season to 2019-2020
+Visualization to contrast **impact** of goal scorers. The data used is premier league goals from 2000-2001 season to 2020-2021 (matchday 12)
 **Disclaimer:** The data shown here is for personal consumption. Please leave 
 feedback replying to my twitter profile [Ituralde] <https://twitter.com/Ituralde> and give a follow once you are there :-) 
                          ''')
