@@ -248,9 +248,9 @@ def update_plot(minGoals,clubselected,pointsaxis,gcgoalsaxis):
                      size='Goals',size_max=40)
         fig1.update_traces(textposition='middle left')
     else:
-        fig = px.scatter(goalScorers,x='GoalsPer90',y=pointsaxis,color='Club',hover_name='Name',
+        fig = px.scatter(goalScorers,x='GoalsPer90',y=pointsaxis,color='Club',text='Surname',hover_name='Name',
                      size='Goals',size_max=40) 
-        fig1 = px.scatter(goalScorers,x='GoalsPer90',y=gcgoalsaxis,color='Club',hover_name='Name',
+        fig1 = px.scatter(goalScorers,x='GoalsPer90',y=gcgoalsaxis,color='Club',text='Surname',hover_name='Name',
                      size='Goals',size_max=40)
     
     fig.update_layout(xaxis_title='Goals per 90 mins',yaxis_title=ylabel,
