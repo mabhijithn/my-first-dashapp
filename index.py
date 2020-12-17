@@ -185,6 +185,8 @@ def update_plot(minGoals,clubselected,pointsaxis,gcgoalsaxis):
         
     datatoplot = playerstats[playerstats['Goals']>=minGoals]
     datatoplot['Surname'] = datatoplot['Name'].str.extract(r' ([a-zA-z_äöüÄÖÜŠùûüÿàáâćæéèêëïîíôšž ]+)')
+    nullnames = pd.isnull(datatoplot['Surname'])
+    datatoplot.loc[nullnames,'Surname'] = datatoplot.loc[nullnames,'Name']
     datatoplot.sort_values(by='Goals',ascending=False,inplace=True)
     datatoplot.loc[:,'Goals'] = pd.to_numeric(datatoplot.loc[:,'Goals'])
     datatoplot.loc[:,'GCGoals'] = pd.to_numeric(datatoplot.loc[:,'GCGoals'])
