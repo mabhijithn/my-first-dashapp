@@ -26,8 +26,11 @@ clubnames = df_clubs['Club'].to_list()
 clubnames.insert(0,'All Clubs')
 maindescr = dcc.Markdown('''
 Visualization to contrast **impact** of goal scorers. The data used is premier league goals from 2000-2001 season to 2020-2021 (matchday 12)
+
 **Disclaimer:** The data shown here is for personal consumption. Please leave 
 feedback replying to my twitter profile [Ituralde] <https://twitter.com/Ituralde> and give a follow once you are there :-) 
+
+**Thank me with a coffee**: If you loved the interactive visualization below, you won't go wrong by buying me a coffee! https://ko-fi.com/ituralde ;-)
                          ''')
 
 descriptionTab1 = dcc.Markdown('''
